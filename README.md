@@ -18,7 +18,6 @@ A game-independent, server-side land-claim mod for Luanti, inspired by Minecraft
 - `/claim cancel` clears an unfinished shovel selection.
 - Claims are saved in mod storage and survive restarts.
 - Claim boundaries cannot overlap.
-- Includes its own shovel texture and has no Mineclonia-specific dependency.
 
 ## Install
 
