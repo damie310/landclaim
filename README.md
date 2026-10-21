@@ -5,6 +5,7 @@ A game-independent, server-side land-claim mod for Luanti, inspired by Minecraft
 **Author:** Damie310  
 **Version:** 1.2.0  
 **License:** MIT
+**Texture Artist:** ac.adapter
 
 ## Features
 
