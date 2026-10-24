@@ -1,17 +1,20 @@
-## Luanti LandClaim
+# Luanti LandClaim
 
 A game-independent, server-side land-claim mod for Luanti, inspired by Minecraft golden-shovel claim plugins.
 
-**Author:** Damie310  
-**Version:** 1.2.0  
-**License:** MIT
+## Project information
 
-**Texture Artist:** ac.adapter
+- **Author:** Damie310
+- **Version:** 1.3.0
+- **Mod license:** MIT (see [`LICENSE`](LICENSE))
+- **Golden shovel texture:** Created for LandClaim by **ac.adapter**. Licensed under the MIT License with the copyright holder's approval. See [`GOLDEN-SHOVEL-LICENSE.md`](GOLDEN-SHOVEL-LICENSE.md) and [`TEXTURE-LICENSE.md`](TEXTURE-LICENSE.md).
 
 ## Features
 
 - Select two opposite corners using the Golden Claim Shovel.
 - Claims protect a rectangular X/Z area through the configured world height.
+- Players who are not the owner or trusted friends cannot damage registered creatures inside a claim.
+- Tamed or owned pets are protected from player punches everywhere in the world, including outside claims.
 - Owners can add trusted friends with `/claim add <player>` and remove them with `/claim remove <player>`.
 - `/claim list` lists claims you own or are trusted in.
 - `/claim abandon [claim_id]` abandons a claim; if you own multiple claims, specify its ID.
@@ -29,12 +32,14 @@ A game-independent, server-side land-claim mod for Luanti, inspired by Minecraft
 
 ## Player commands
 
-- `/claimshovel` — get a claim shovel.
-- `/claim add <player>` — trust a player on all your claims.
-- `/claim remove <player>` — remove a trusted player from all your claims.
-- `/claim list` — show claims you own or have access to.
-- `/claim abandon [claim_id]` — abandon one of your claims.
-- `/claim cancel` — cancel an in-progress selection.
+| Command | Description |
+| --- | --- |
+| `/claimshovel` | Get a claim shovel. |
+| `/claim add <player>` | Trust a player on all your claims. |
+| `/claim remove <player>` | Remove a trusted player from all your claims. |
+| `/claim list` | Show claims you own or have access to. |
+| `/claim abandon [claim_id]` | Abandon one of your claims. |
+| `/claim cancel` | Cancel an in-progress selection. |
 
 ## Settings
 
@@ -57,8 +62,11 @@ All `/claimadmin` commands require Luanti's built-in `server` privilege. Regular
 - `/claimadmin info` — show claim details for the claim where the admin is standing.
 - `/claimadmin bypass` — toggle claim-protection bypass for yourself; run it again to disable. Bypass resets when you leave the server.
 
-The commands are registered with `privs = {server = true}` and are restricted to server-privileged administrators.
+## Protection notes
 
-## Notes
+The mod integrates with Luanti's `is_protected` API for block protection. Entity protection wraps entity `on_punch` callbacks when mods finish loading. Exact pet ownership/taming fields vary between games and mob mods, so global pet protection works for entities that expose a recognized owner field (`owner`, `owner_name`, `tamed_by`, `_owner`, `ownername`, `playername`) or a `tamed`/`is_tamed` flag. Some games may use different conventions or custom damage paths and may need a game-specific adapter. Claim animal protection likewise depends on the entity's registered `on_punch` callback.
 
-Friend management commands add or remove the player across all claims owned by the command issuer. The mod integrates with Luanti's `is_protected` API. Some game-specific interactions may need additional integration to ensure they respect claims.
+## Credits and licensing
+
+- **Golden shovel texture** (`textures/landclaim_golden_shovel.png`): Created for LandClaim by **ac.adapter**. Licensed under the MIT License with approval from the copyright holder. See [`GOLDEN-SHOVEL-LICENSE.md`](GOLDEN-SHOVEL-LICENSE.md) for the texture-specific terms and [`TEXTURE-LICENSE.md`](TEXTURE-LICENSE.md) for details.
+- **Mod source code:** Copyright (c) 2026 Damie310, licensed under the MIT License.

@@ -67,6 +67,52 @@ minetest.register_on_protection_violation(function(pos, name)
   end
 end)
 
+-- Protect entities from player punches. In claims, non-trusted players cannot
+-- damage any registered entity. Outside claims, protect tamed/owned pets globally.
+local function entity_owner(luaentity)
+  if not luaentity then return nil end
+  local fields = {"owner", "owner_name", "tamed_by", "_owner", "ownername", "playername"}
+  for _, field in ipairs(fields) do
+    local value = luaentity[field]
+    if type(value) == "string" and value ~= "" then return value end
+  end
+  -- Common conventions used by several Luanti mob frameworks.
+  if luaentity.tamed == true or luaentity.is_tamed == true then
+    return luaentity.owner or luaentity.owner_name or luaentity.tamed_by or "__tamed_pet__"
+  end
+  return nil
+end
+
+local function wrap_entity_punch(def)
+  if type(def) ~= "table" or def._landclaim_punch_wrapped or type(def.on_punch) ~= "function" then return end
+  local original = def.on_punch
+  def.on_punch = function(self, puncher, time_from_last_punch, tool_capabilities, dir, damage)
+    if puncher and puncher:is_player() then
+      local pos = self.object and self.object:get_pos()
+      if pos then
+        local claim = get_claim(pos)
+        local player_name = puncher:get_player_name()
+        if claim and not can_build(claim, player_name) then
+          notify(player_name, "You cannot hurt animals or creatures in a claim unless you are trusted there.")
+          return
+        end
+      end
+      -- Owned or explicitly tamed entities are treated as pets everywhere.
+      -- This blocks player punches regardless of location or who owns the pet.
+      if entity_owner(self) then
+        notify(puncher:get_player_name(), "Pets are protected from player damage everywhere in this world.")
+        return
+      end
+    end
+    return original(self, puncher, time_from_last_punch, tool_capabilities, dir, damage)
+  end
+  def._landclaim_punch_wrapped = true
+end
+
+minetest.register_on_mods_loaded(function()
+  for _, def in pairs(minetest.registered_entities) do wrap_entity_punch(def) end
+end)
+
 local function claim_summary(c)
   return "Claim #" .. c.id .. " owned by " .. c.owner .. " (" .. (c.x2-c.x1+1) .. " x " .. (c.z2-c.z1+1) .. ")"
 end
@@ -122,8 +168,8 @@ end
 
 minetest.register_tool(MODNAME .. ":golden_shovel", {
   description = "Golden Claim Shovel",
-  inventory_image = "landclaim_mcl_golden_shovel.png",
-  wield_image = "landclaim_mcl_golden_shovel.png",
+  inventory_image = "landclaim_golden_shovel.png",
+  wield_image = "landclaim_golden_shovel.png",
   tool_capabilities = {full_punch_interval = 1.2, max_drop_level = 0, groupcaps = {}, damage_groups = {fleshy = 1}},
   on_place = function(stack, user, pointed)
     if not user or not user:is_player() then return stack end
