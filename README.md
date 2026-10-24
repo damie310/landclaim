@@ -5,7 +5,7 @@ A game-independent, server-side land-claim mod for Luanti, inspired by Minecraft
 ## Project information
 
 - **Author:** Damie310
-- **Version:** 1.3.0
+- **Version:** 1.1.0
 - **Mod license:** MIT (see [`LICENSE`](LICENSE))
 - **Golden shovel texture:** Created for LandClaim by **ac.adapter**. Licensed under the MIT License with the copyright holder's approval. See [`GOLDEN-SHOVEL-LICENSE.md`](GOLDEN-SHOVEL-LICENSE.md).
 
